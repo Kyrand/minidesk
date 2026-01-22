@@ -5,7 +5,12 @@ import { resolve } from 'path';
 
 export default defineConfig({
   plugins: [
-    svelte(),
+    svelte({
+      compilerOptions: {
+        // Enable browser mode for tests
+        dev: process.env.NODE_ENV !== 'production'
+      }
+    }),
     electron({
       main: {
         entry: 'src/main/index.ts',
@@ -13,6 +18,7 @@ export default defineConfig({
           build: {
             outDir: 'dist/main',
             rollupOptions: {
+              external: ['better-sqlite3'],
               output: {
                 entryFileNames: 'index.js'
               }
@@ -41,11 +47,24 @@ export default defineConfig({
       $lib: resolve(__dirname, './src/renderer/src/lib'),
       $components: resolve(__dirname, './src/renderer/src/components'),
     },
+    conditions: ['browser', 'default'],
   },
   test: {
     globals: true,
     environment: 'happy-dom',
     setupFiles: ['./src/test/setup.ts'],
     include: ['src/**/*.test.ts'],
+    alias: {
+      // Force Svelte to use browser mode in tests
+      'svelte/src/runtime': 'svelte/src/runtime/index.js',
+    },
+    server: {
+      deps: {
+        inline: ['svelte']
+      }
+    },
+    resolve: {
+      conditions: ['browser']
+    }
   },
 });

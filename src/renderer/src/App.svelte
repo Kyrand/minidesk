@@ -1,44 +1,49 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import { documentStore } from './lib/stores/documentStore.svelte';
+  import Header from './components/layout/Header.svelte';
+  import Sidebar from './components/layout/Sidebar.svelte';
+  import DocumentEditor from './components/document/DocumentEditor.svelte';
+  import EmptyState from './components/ui/EmptyState.svelte';
+  import Toast from './components/ui/Toast.svelte';
 
   onMount(async () => {
+    // Load recent documents on app startup
     await documentStore.loadRecent(20);
   });
+
+  async function createFirstDocument() {
+    const doc = await documentStore.create();
+    if (doc) {
+      documentStore.currentDocument = doc;
+    }
+  }
 </script>
 
-<div class="flex h-screen items-center justify-center">
-  <div class="text-center">
-    <h1 class="text-4xl font-bold mb-4">MiniDesk</h1>
-    <p class="text-lg mb-4">Lightweight P2P Collaboration Suite</p>
+<div class="flex flex-col h-screen">
+  <!-- Header -->
+  <Header />
 
-    <div class="card w-96 bg-base-100 shadow-xl">
-      <div class="card-body">
-        <h2 class="card-title">Phase 1.2 Complete!</h2>
-        <p>Database Layer Initialized</p>
+  <!-- Main content area -->
+  <div class="flex flex-1 overflow-hidden">
+    <!-- Sidebar -->
+    <Sidebar />
 
-        {#if documentStore.error}
-          <div class="alert alert-error mt-4">
-            <span>{documentStore.error}</span>
-          </div>
-        {/if}
-
-        {#if documentStore.loading}
-          <div class="mt-4">
-            <span class="loading loading-spinner loading-lg"></span>
-          </div>
-        {:else}
-          <div class="mt-4 text-sm">
-            <p>✓ Electron 28+</p>
-            <p>✓ Svelte 5 with Runes</p>
-            <p>✓ Vite</p>
-            <p>✓ Tailwind CSS + DaisyUI</p>
-            <p>✓ TypeScript</p>
-            <p>✓ SQLite Database (better-sqlite3)</p>
-            <p>✓ Documents: {documentStore.documents.length}</p>
-          </div>
-        {/if}
-      </div>
-    </div>
+    <!-- Main content -->
+    <main class="flex-1 overflow-hidden">
+      {#if documentStore.currentDocument}
+        <DocumentEditor />
+      {:else}
+        <EmptyState
+          title="Select a document"
+          description="Choose a document from the sidebar to view and edit it, or create a new one."
+          actionText="Create New Document"
+          onAction={createFirstDocument}
+        />
+      {/if}
+    </main>
   </div>
+
+  <!-- Toast notifications -->
+  <Toast />
 </div>
