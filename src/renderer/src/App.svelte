@@ -1,9 +1,10 @@
 <script lang="ts">
-  let count = $state(0);
+  import { onMount } from 'svelte';
+  import { documentStore } from './lib/stores/documentStore.svelte';
 
-  function increment() {
-    count++;
-  }
+  onMount(async () => {
+    await documentStore.loadRecent(20);
+  });
 </script>
 
 <div class="flex h-screen items-center justify-center">
@@ -13,22 +14,30 @@
 
     <div class="card w-96 bg-base-100 shadow-xl">
       <div class="card-body">
-        <h2 class="card-title">Project Initialized!</h2>
-        <p>Phase 1.1 Complete - Electron + Vite + Svelte 5</p>
+        <h2 class="card-title">Phase 1.2 Complete!</h2>
+        <p>Database Layer Initialized</p>
 
-        <div class="mt-4">
-          <button class="btn btn-primary" onclick={increment}>
-            Count is {count}
-          </button>
-        </div>
+        {#if documentStore.error}
+          <div class="alert alert-error mt-4">
+            <span>{documentStore.error}</span>
+          </div>
+        {/if}
 
-        <div class="mt-4 text-sm">
-          <p>✓ Electron 28+</p>
-          <p>✓ Svelte 5 with Runes</p>
-          <p>✓ Vite</p>
-          <p>✓ Tailwind CSS + DaisyUI</p>
-          <p>✓ TypeScript</p>
-        </div>
+        {#if documentStore.loading}
+          <div class="mt-4">
+            <span class="loading loading-spinner loading-lg"></span>
+          </div>
+        {:else}
+          <div class="mt-4 text-sm">
+            <p>✓ Electron 28+</p>
+            <p>✓ Svelte 5 with Runes</p>
+            <p>✓ Vite</p>
+            <p>✓ Tailwind CSS + DaisyUI</p>
+            <p>✓ TypeScript</p>
+            <p>✓ SQLite Database (better-sqlite3)</p>
+            <p>✓ Documents: {documentStore.documents.length}</p>
+          </div>
+        {/if}
       </div>
     </div>
   </div>
