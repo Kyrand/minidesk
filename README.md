@@ -27,25 +27,25 @@ Lightweight P2P collaboration suite with markdown editor, file sharing, and chat
 ### Prerequisites
 
 - Node.js 18+
-- npm or pnpm
+- pnpm (recommended) or npm
 
 ### Setup
 
 ```bash
 # Install dependencies
-npm install
+pnpm install
 
 # Run development server
-npm run dev
+pnpm dev
 
 # Run tests
-npm test
+pnpm test
 
 # Run tests in watch mode
-npm run test
+pnpm test
 
 # Run tests with UI
-npm run test:ui
+pnpm test:ui
 ```
 
 ### Project Structure

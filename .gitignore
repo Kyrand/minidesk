@@ -26,6 +26,7 @@ dist-ssr
 
 # Build output
 /dist
+/dist-electron
 /out
 /build
 *.tsbuildinfo
